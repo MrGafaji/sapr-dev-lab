@@ -7,8 +7,11 @@
 <style>
   main {
     position: relative;
-    max-width: 70%;
-    background-color: black;
+
+    max-width: 100%;
+    height: 100%;
+    background-color: rgb(109, 53, 114);
+
     color: white;
     margin: auto auto;
     box-sizing: border-box;
