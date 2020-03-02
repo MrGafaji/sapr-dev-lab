@@ -36,6 +36,10 @@
       return array;
     });
   };
+
+//todo: 
+// x and y, or coinsRegister below are not updated somehow, make it simple and reactive first
+
 </script>
 
 <Playground>
@@ -56,4 +60,3 @@
     </button>
   </StatusBar>
 </Playground>
-<!-- <head><script src="node_modules/webmidi/webmidi.min.js"></script></head> -->

@@ -2,7 +2,12 @@
   import { onMount } from "svelte";
   const viewBoxWidth = 200;
   const viewBoxHeight = 200;
-  const numberOfCircles = 10;
+  const numberOfCircles = 17;
+  const center = {};
+  center.x = viewBoxWidth * 0.5;
+  center.y = viewBoxHeight * 0.5;
+  const rotRadius = 50;
+  const speed = 0.0005;
 
   let registeredCircles = [];
   let start;
@@ -12,8 +17,8 @@
   function step(timestamp) {
     if (!start) start = timestamp;
     progress = timestamp - start;
-    for (let i = 0; i < registeredCircles.length; i++) {
-      moveCircle(i, progress);
+    for (let i = 1; i < registeredCircles.length + 1; i++) {
+      moveCircle(i, progress * speed, rotRadius, center);
     }
     if (progress < 100000 && !pause) {
       window.requestAnimationFrame(step);
@@ -23,10 +28,12 @@
   function populateRegisteredCircles() {
     for (let i = 0; i < numberOfCircles; i++) {
       var circle = {};
-      circle.cx = Math.random() * viewBoxWidth;
-      circle.cy = Math.random() * viewBoxHeight;
+      circle.cy =
+        center.y + rotRadius * Math.sin((i * 2 * Math.PI) / numberOfCircles);
+      circle.cx =
+        center.x + rotRadius * Math.cos((i * 2 * Math.PI) / numberOfCircles);
       circle.r = 5;
-      circle.id = "circle-" + i;
+      circle.id = "circle-" + (i + 1);
 
       circle.initial = circle;
 
@@ -34,24 +41,26 @@
     }
   }
 
-  function moveCircle(circleId, prog) {
+  function moveCircle(circleId, prog, rotRadius, center) {
     var circle = document.getElementById("circle-" + circleId);
     if (circle) {
       circle.setAttribute(
         "cx",
-        registeredCircles[circleId].initial.cx +
-          Math.sin(prog / 1000) * registeredCircles[circleId].initial.cx
+        center.x +
+          rotRadius *
+            Math.cos(prog + (circleId * 2 * Math.PI) / numberOfCircles)
       );
       circle.setAttribute(
         "cy",
-        registeredCircles[circleId].initial.cy +
-          Math.sin(prog / 2000) * registeredCircles[circleId].initial.cy
+        center.y +
+          rotRadius *
+            Math.sin(prog + (circleId * 2 * Math.PI) / numberOfCircles)
       );
-      circle.setAttribute(
-        "r",
-        registeredCircles[circleId].initial.r +
-          Math.sin(prog / 1500) * registeredCircles[circleId].initial.r
-      );
+      //   circle.setAttribute(
+      //     "r",
+      //     registeredCircles[circleId].initial.r +
+      //       Math.sin(prog / 1500) * registeredCircles[circleId].initial.r
+      //   );
     } else {
       console.log(" No circles found");
     }
