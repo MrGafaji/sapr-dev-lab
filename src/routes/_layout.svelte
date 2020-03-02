@@ -8,15 +8,13 @@
   main {
     position: relative;
     max-width: 70%;
-    background-color: black;
-    color: white;
     margin: auto auto;
     box-sizing: border-box;
     font-size: 2em;
   }
 </style>
 
-<Nav {segment}/>
+<Nav {segment} />
 
 <main>
   <slot />
