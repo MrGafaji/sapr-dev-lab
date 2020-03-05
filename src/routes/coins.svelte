@@ -1,3 +1,10 @@
+<style>
+svg {
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.1)}
+</style>
+
 <script>
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
@@ -64,7 +71,7 @@
 </svelte:head>
 
 <Playground enable="false">
-  <svg viewbox="0 0 127 127" bind:this={svg}>
+  <svg viewbox="0 0 180 80" bind:this={svg}>
     {#each coinsRegister as coin}
       <Coin {...coin} midiOutput={midiOutput}></Coin>
     {:else}

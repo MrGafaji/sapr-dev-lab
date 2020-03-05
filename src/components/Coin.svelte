@@ -13,21 +13,25 @@
   let circle;
   
   const convertPoint = getContext("convertPoint");
+  const scale = (num, [in_min, in_max], [out_min, out_max]) => {
+    return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  }
+  const limit = (input, max = 100) => {
+    return input < 0 ? 0 : input > max ? max : input;
+  }
 
   const updateCoords = event => {
-    const scale = (num, [in_min, in_max], [out_min, out_max]) => {
-      return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-    }
     if (event.cancelable) {
       event.preventDefault();
     }
     event.stopPropagation();
     const touch = [...event.touches].find(touch => touch.target === circle);
 
-    const { x, y } = convertPoint(touch.clientX, touch.clientY);
+    let { x, y } = convertPoint(touch.clientX, touch.clientY);
+    [x,y] = [x,y].map(d => limit(d));
     [y].forEach((dimension, i) => {
-      const scaledDimension = scale(dimension, [0, 127], [-1, 1])
-      midiOutput.sendPitchBend(scaledDimension, 12 + i + 2*circle.id);
+      const scaledDimension = scale(dimension, [0, 100], [1, -1])
+      midiOutput.sendPitchBend(scaledDimension, i+1 + 2*circle.id);
     })
     $coords = { x, y };
   };
