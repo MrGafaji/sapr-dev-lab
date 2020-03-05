@@ -16,7 +16,7 @@
     progress = timestamp - start;
 
     for (let i = 0; i < registeredTriangles.length; i++) {
-      setTriangle(i, progress);
+      !pause && setTriangle(i, progress);
     }
 
     !pause && window.requestAnimationFrame(step);

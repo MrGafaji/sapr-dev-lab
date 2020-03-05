@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   const viewBoxWidth = 200;
   const viewBoxHeight = 200;
   const numberOfCircles = 17;
@@ -15,12 +15,12 @@
   let pause = false;
 
   function step(timestamp) {
-    if (!start) start = timestamp;
-    progress = timestamp - start;
-    for (let i = 1; i < registeredCircles.length + 1; i++) {
-      moveCircle(i, progress * speed, rotRadius, center);
-    }
-    if (progress < 100000 && !pause) {
+    if (!pause) {
+      if (!start) start = timestamp;
+      progress = timestamp - start;
+      for (let i = 1; i < registeredCircles.length + 1; i++) {
+        moveCircle(i, progress * speed, rotRadius, center);
+      }
       window.requestAnimationFrame(step);
     }
   }
@@ -78,6 +78,9 @@
     window.moveCircle = moveCircle;
     window.requestAnimationFrame(step);
   });
+  onDestroy(() => {
+    pause = true;
+  });
 </script>
 
 <style>
@@ -103,4 +106,4 @@
 
 </svg>
 
-<button on:click={onPause(pause)}>pause</button>
+<button on:click={onPause(pause)}>{pause ? 'resume' : 'pause'}</button>

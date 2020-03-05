@@ -6,6 +6,7 @@ body {
   line-height: 1.5;
   background-color: black;
   color: white;
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1,
@@ -40,4 +41,15 @@ code {
   body {
     font-size: 16px;
   }
+}
+
+button {
+  -webkit-appearance: none;
+  background: linear-gradient(135deg, magenta, darkblue);
+  font-weight: bolder;
+  font-variant: small-caps;
+  font-size: 1em;
+  color: paleturquoise;
+  padding: 0.5em 1em;
+  border: solid 2px paleturquoise;
 }
