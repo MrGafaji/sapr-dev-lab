@@ -5,10 +5,8 @@
 
 <style>
   .status-bar {
-    position: absolute;
-    bottom: 10px;
-    left: 0;
-    width: 100vw;
+    margin: 1em 0;
+    width: 100%;
     font-size: 0.5em;
     display: flex;
     justify-content: space-between;
@@ -16,15 +14,14 @@
   span {
     margin: 0 1em;
   }
-  .to-right {
-    align-self: flex-end;
-  }
 </style>
 
 <div class="status-bar">
-  <span>{label}</span>
-  <span>{status}</span>
-  <span class="to-right">
+  <span>
+    <span>{label}</span>
+    <span>{status}</span>
+  </span>
+  <span>
     <slot />
   </span>
 </div>

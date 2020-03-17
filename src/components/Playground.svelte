@@ -9,7 +9,9 @@
     user-select: none;
   }
   .playground {
-    margin: 5% 5% 200px 5%;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    height: 100%;
   }
 </style>
 
