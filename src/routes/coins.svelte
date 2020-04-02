@@ -8,8 +8,9 @@
   import Coin from "../components/Coin.svelte";
   import StatusBar from "../components/StatusBar.svelte";
 
-  let status = null;
-  let midiOutput;
+  let status = "initial";
+  let midi;
+  let midiOutput = writable(null);
   let coinsRegister = writable([]);
 
   let viewBox = { x: 0, y: 0, width: 180, height: 100 };
@@ -89,6 +90,9 @@
     addCoin();
   };
 
+  midiOutput.subscribe(device => {
+    if (device) status = "Connected with " + get(midiOutput).name;
+  });
   coinsRegister.subscribe(register => {
     if (register.length) setLocalStorage("coins", register);
   });
@@ -104,14 +108,14 @@
     });
     window.localStorage.setItem(entry, JSON.stringify(flatRegister));
   };
-  
+
   const enableMidi = () => {
     WebMidi.enable(function(err) {
       if (err) {
         console.log("WebMidi could not be enabled.", err);
       } else {
-        midiOutput = WebMidi.outputs[0];
-        status = "Connected with " + midiOutput.name;
+        midi = WebMidi;
+        midiOutput.set(WebMidi.outputs[0]);
       }
     });
   };
@@ -144,13 +148,21 @@
     {viewBox.height}"
     bind:this={svg}>
     {#each $coinsRegister as coin}
-      <Coin {...coin} {midiOutput} updateRegister={onUpdateRegister} {viewBox} />
+      <Coin
+        {...coin}
+        midiOutput={$midiOutput}
+        updateRegister={onUpdateRegister}
+        {viewBox} />
     {:else}
       <p>Add coins first</p>
     {/each}
   </svg>
 
-  <StatusBar label="Status:" status={status && status.toString()}>
+  <StatusBar
+    label="Status:"
+    status={status && status.toString()}
+    {midi}
+    {midiOutput}>
     <button on:click={onAddCoin}>add coin</button>
   </StatusBar>
 </Playground>
