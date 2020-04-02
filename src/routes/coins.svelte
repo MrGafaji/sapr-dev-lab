@@ -115,7 +115,7 @@
         console.log("WebMidi could not be enabled.", err);
       } else {
         midi = WebMidi;
-        midiOutput.set(WebMidi.outputs[0]);
+        midiOutput.set(WebMidi.outputs[1]);
       }
     });
   };
