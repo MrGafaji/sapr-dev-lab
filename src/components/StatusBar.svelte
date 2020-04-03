@@ -1,15 +1,15 @@
 <script>
-  import { setContext, getContext } from "svelte";
+  import { setContext } from "svelte";
 
   export let label;
   export let status;
   export let midi;
   export let midiOutput;
-  export let midiDeviceMenu;
+  export let showDeviceMenu;
 
   const onChangeMidiDevice = device => {
     midiOutput.set(device);
-    midiDeviceMenu.show = !midiDeviceMenu.show;
+    showDeviceMenu.set(false);
   };
 </script>
 
@@ -40,7 +40,7 @@
     <span>
       {#if status}
         <a
-          on:click|stopPropagation|preventDefault={() => midiDeviceMenu.show = !midiDeviceMenu.show}
+          on:click|stopPropagation|preventDefault={() => $showDeviceMenu = !$showDeviceMenu}
           class="status"
           href="#open"
           alt="open midi device menu">
@@ -48,9 +48,9 @@
         </a>
       {:else}loading...{/if}
     </span>
-    <span class="device-menu {!midiDeviceMenu.show && 'hidden'}">
-      {#if midi}
-        {#each midi.outputs as device}
+    <span class="device-menu {!$showDeviceMenu && 'hidden'}">
+      {#if $midi}
+        {#each $midi.outputs as device}
           <div on:click|stopPropagation={() => onChangeMidiDevice(device)}>{device.name}</div>
         {:else}
           <p>No devices..</p>

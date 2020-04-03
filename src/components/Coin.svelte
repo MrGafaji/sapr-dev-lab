@@ -24,9 +24,10 @@
     return input < min ? min : input > max ? max : input;
   };
 
-  const fingerTrick = event => {
+  const fingerTracking = event => {
     const touch = [...event.touches].find(touch => touch.target === circle);
-    return convertPoint(touch.clientX, touch.clientY);
+    const {x, y} = convertPoint(touch.clientX, touch.clientY);
+    return  {x, y};
   };
 
   const updateCoords = throttle((x, y) => {
@@ -43,13 +44,13 @@
     ];
     const definitelyScaled = pitchBends.every(d => d > -1 && d < 1);
     definitelyScaled && pitchBends.forEach((pitchBend, i) => {
-      midiOutput.sendPitchBend(pitchBend, i + 1 + 2 * circle.id);
+      $midiOutput.sendPitchBend(pitchBend, i + 1 + 2 * circle.id);
     });
   }
 
   const onMove = event => {
     event.stopPropagation();
-    let { x, y } = fingerTrick(event);
+    let { x, y } = fingerTracking(event);
     sendMidi(x, y);
     updateCoords(x, y);
   };

@@ -1,26 +1,22 @@
 <script>
-  import { onMount, afterUpdate, onDestroy } from "svelte";
+  import { onMount } from "svelte";
+  import { getContext, setContext } from "svelte";
   import { writable, get } from "svelte/store";
-  import { setContext, getContext } from "svelte";
-  import { spring } from "svelte/motion";
-  import WebMidi from "webmidi";
   import Playground from "../components/Playground.svelte";
   import Coin from "../components/Coin.svelte";
   import StatusBar from "../components/StatusBar.svelte";
-
-  let status;
-  let midi;
-  let midiOutput = writable(null);
-  let coinsRegister = writable([]);
-
-  let midiDeviceMenu = {
-    show: false,
-    toggle: show => {
-      midiDeviceMenu.show = show !== undefined ? show : !midiDeviceMenu.show;
-    }
-  };
-
-  let viewBox = { x: 0, y: 0, width: 180, height: 100 };
+  import {
+    status,
+    midi,
+    midiOutput,
+    coins,
+    viewBox,
+    showDeviceMenu,
+    stopPropagation,
+    addCoin,
+    setLocalStorage,
+    enableMidi
+  } from "../store.js";
 
   let svg;
   setContext("convertPoint", (x, y) => {
@@ -30,24 +26,38 @@
     return pt.matrixTransform(svg.getScreenCTM().inverse());
   });
 
-  const stopPropagation = event => {
-    if (event.cancelable) {
-      event.preventDefault();
-    }
-    event.stopPropagation();
+  let onUpdateRegister = () => {};
+
+  const onAddCoin = () => {
+    addCoin();
+  };
+
+  const onClearCoins = () => {
+    coins.set([]);
   };
 
   onMount(() => {
     enableMidi();
-    const registerFromLocalStorage = JSON.parse(
-      window.localStorage.getItem("coins")
-    );
-    if (registerFromLocalStorage !== null) {
-      coinsRegister.set([]);
-      registerFromLocalStorage.map(coinJson => {
+    const localStorageCoins = JSON.parse(window.localStorage.getItem("coins"));
+    if (localStorageCoins !== null) {
+      coins.set([]);
+      localStorageCoins.map(coinJson => {
         addCoin(coinJson);
       });
     }
+    onUpdateRegister = () => {
+      setLocalStorage("coins", get(coins), window);
+    };
+
+    midiOutput.subscribe(device => {
+      if (device) {
+        status.set("Connected with " + get(midiOutput).name);
+      }
+    });
+
+    coins.subscribe(register => {
+      if (register.length) setLocalStorage("coins", register, window);
+    });
 
     document
       .querySelector(".playground")
@@ -56,80 +66,6 @@
       .querySelector(".playground")
       .addEventListener("touchcancel", event => stopPropagation(event), true);
   });
-
-  const onUpdateRegister = () => {
-    setLocalStorage("coins", get(coinsRegister));
-  };
-
-  let addCoin = coinJson => {
-    coinsRegister.update(register => {
-      const { x, y } = coinJson
-        ? coinJson.coords
-        : { x: register.length * 10 + 15, y: 15 };
-
-      if (register.length < 10) {
-        return [
-          ...register,
-          {
-            id: coinJson ? coinJson.id : register.length,
-            color: [
-              "gold",
-              "silver",
-              "DarkGoldenRod",
-              "magenta",
-              "cyan",
-              "orange",
-              "limegreen",
-              "pink",
-              "orangered",
-              "CadetBlue"
-            ][register.length],
-            coords: spring({ x: x, y: y })
-          }
-        ];
-      } else {
-        return register;
-      }
-    });
-  };
-
-  let onAddCoin = () => {
-    addCoin();
-  };
-
-  let onClearCoins = () => {
-    coinsRegister.set([]);
-  };
-
-  midiOutput.subscribe(device => {
-    if (device) status = "Connected with " + get(midiOutput).name;
-  });
-  coinsRegister.subscribe(register => {
-    if (register.length) setLocalStorage("coins", register);
-  });
-
-  const setLocalStorage = (entry, register) => {
-    const flatRegister = register.map(coin => {
-      let x, y;
-      coin.coords.subscribe(c => {
-        x = c.x;
-        y = c.y;
-      });
-      return { ...coin, coords: { x: x, y: y } };
-    });
-    window.localStorage.setItem(entry, JSON.stringify(flatRegister));
-  };
-
-  const enableMidi = () => {
-    WebMidi.enable(function(err) {
-      if (err) {
-        console.log("WebMidi could not be enabled.", err);
-      } else {
-        midi = WebMidi;
-        midiOutput.set(WebMidi.outputs[1]);
-      }
-    });
-  };
 </script>
 
 <style>
@@ -151,19 +87,20 @@
   <title>Coin</title>
 </svelte:head>
 
-<Playground onPlaygroundClick={() => midiDeviceMenu.show = false}>
+<Playground onPlaygroundClick={() => showDeviceMenu.set(false)}>
   <svg
     viewbox="{viewBox.x}
     {viewBox.y}
     {viewBox.width}
     {viewBox.height}"
     bind:this={svg}>
-    {#each $coinsRegister as coin}
+    {#each $coins as coin}
       <Coin
         {...coin}
-        midiOutput={$midiOutput}
+        midiOutput={midiOutput}
         updateRegister={onUpdateRegister}
-        {viewBox} />
+        viewBox={viewBox} 
+      />
     {:else}
       <p>Add coins first</p>
     {/each}
@@ -171,10 +108,10 @@
 
   <StatusBar
     label="Status:"
-    status={status && status.toString()}
-    {midi}
-    {midiOutput}
-    {midiDeviceMenu}>
+    status={$status}
+    midi={midi}
+    midiOutput={midiOutput}
+    showDeviceMenu={showDeviceMenu}>
     <button on:click={onAddCoin}>add coin</button>
     <button on:click={onClearCoins}>destroy</button>
   </StatusBar>
