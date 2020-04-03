@@ -6,9 +6,14 @@
 
   let hideMenu = true;
 
-  const showMenu = (e) => {
+  const toggleMenu = e => {
     e.preventDefault();
     hideMenu = !hideMenu;
+  };
+
+  const onChangeMidiDevice = device => {
+    midiOutput.set(device);
+    toggleMenu;
   };
 </script>
 
@@ -37,12 +42,14 @@
   <span>
     <span>{label}</span>
     <span>
-      <a on:click={showMenu} class="status" href="#open">{status}</a>
+      {#if status}
+        <a on:click={toggleMenu} class="status" href="#open">{status}</a>
+      {:else}loading...{/if}
     </span>
     <span class="device-menu {hideMenu && 'hidden'}">
       {#if midi}
-        {#each midi.outputs as device, index}
-          <div on:click={() => midiOutput.set(midi.outputs[index])}>{device.name}</div>
+        {#each midi.outputs as device}
+          <div on:click={() => onChangeMidiDevice(device)}>{device.name}</div>
         {:else}
           <p>No devices..</p>
         {/each}

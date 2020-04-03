@@ -8,7 +8,7 @@
   import Coin from "../components/Coin.svelte";
   import StatusBar from "../components/StatusBar.svelte";
 
-  let status = "initial";
+  let status;
   let midi;
   let midiOutput = writable(null);
   let coinsRegister = writable([]);
@@ -90,6 +90,10 @@
     addCoin();
   };
 
+  let onClearCoins = () => {
+    coinsRegister.set([]);
+  };
+
   midiOutput.subscribe(device => {
     if (device) status = "Connected with " + get(midiOutput).name;
   });
@@ -164,5 +168,6 @@
     {midi}
     {midiOutput}>
     <button on:click={onAddCoin}>add coin</button>
+    <button on:click={onClearCoins}>destroy</button>
   </StatusBar>
 </Playground>

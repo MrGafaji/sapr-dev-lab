@@ -1,6 +1,7 @@
 <script>
-  import { spring } from "svelte/motion";
-  import { getContext } from "svelte";
+  import { spring } from 'svelte/motion';
+  import { getContext } from 'svelte';
+  import throttle from 'lodash/throttle';
 
   export let color = "white";
   export let id = 0;
@@ -12,36 +13,46 @@
   export let midiOutput;
   export let updateRegister;
 
+  const convertPoint = getContext("convertPoint");
   let circle;
 
-  const convertPoint = getContext("convertPoint");
   const scale = (num, [in_min, in_max], [out_min, out_max]) => {
     return ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
   };
+
   const limit = (input, min, max) => {
     return input < min ? min : input > max ? max : input;
   };
 
-  const updateCoords = event => {
-    if (event.cancelable) {
-      event.preventDefault();
-    }
-    event.stopPropagation();
+  const fingerTrick = event => {
     const touch = [...event.touches].find(touch => touch.target === circle);
+    return convertPoint(touch.clientX, touch.clientY);
+  };
 
-    let { x, y } = convertPoint(touch.clientX, touch.clientY);
+  const updateCoords = throttle((x, y) => {
     x = limit(x, viewBox.x, viewBox.width);
     y = limit(y, viewBox.y, viewBox.height);
     coords.set({ x, y });
     updateRegister();
+  }, 50);
 
+  const sendMidi = (x, y) => {
     let pitchBends = [
       scale(x, [viewBox.x, viewBox.width], [-1, 1]),
       scale(y, [viewBox.y, viewBox.height], [1, -1])
     ];
-    pitchBends.forEach((pitchBend, i) => {
+    const definitelyScaled = pitchBends.every(d => d > -1 && d < 1);
+    definitelyScaled && pitchBends.forEach((pitchBend, i) => {
       midiOutput.sendPitchBend(pitchBend, i + 1 + 2 * circle.id);
     });
+  }
+
+  const onTheMove = event => {
+    if (event.cancelable) event.preventDefault();
+    event.stopPropagation();
+    let { x, y } = fingerTrick(event);
+    sendMidi(x, y);
+    updateCoords(x, y);
   };
 </script>
 
@@ -49,7 +60,7 @@
 <circle
   bind:this={circle}
   {id}
-  on:touchmove={updateCoords}
+  on:touchmove={onTheMove}
   cx={$coords.x}
   cy={$coords.y}
   r={size}
