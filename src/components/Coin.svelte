@@ -47,8 +47,7 @@
     });
   }
 
-  const onTheMove = event => {
-    if (event.cancelable) event.preventDefault();
+  const onMove = event => {
     event.stopPropagation();
     let { x, y } = fingerTrick(event);
     sendMidi(x, y);
@@ -60,7 +59,7 @@
 <circle
   bind:this={circle}
   {id}
-  on:touchmove={onTheMove}
+  on:touchmove|preventDefault={onMove}
   cx={$coords.x}
   cy={$coords.y}
   r={size}

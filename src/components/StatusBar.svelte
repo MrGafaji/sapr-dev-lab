@@ -1,19 +1,15 @@
 <script>
+  import { setContext, getContext } from "svelte";
+
   export let label;
   export let status;
   export let midi;
   export let midiOutput;
-
-  let hideMenu = true;
-
-  const toggleMenu = e => {
-    e.preventDefault();
-    hideMenu = !hideMenu;
-  };
+  export let midiDeviceMenu;
 
   const onChangeMidiDevice = device => {
     midiOutput.set(device);
-    toggleMenu;
+    midiDeviceMenu.show = !midiDeviceMenu.show;
   };
 </script>
 
@@ -43,13 +39,19 @@
     <span>{label}</span>
     <span>
       {#if status}
-        <a on:click={toggleMenu} class="status" href="#open">{status}</a>
+        <a
+          on:click|stopPropagation|preventDefault={() => midiDeviceMenu.show = !midiDeviceMenu.show}
+          class="status"
+          href="#open"
+          alt="open midi device menu">
+          {status}
+        </a>
       {:else}loading...{/if}
     </span>
-    <span class="device-menu {hideMenu && 'hidden'}">
+    <span class="device-menu {!midiDeviceMenu.show && 'hidden'}">
       {#if midi}
         {#each midi.outputs as device}
-          <div on:click={() => onChangeMidiDevice(device)}>{device.name}</div>
+          <div on:click|stopPropagation={() => onChangeMidiDevice(device)}>{device.name}</div>
         {:else}
           <p>No devices..</p>
         {/each}

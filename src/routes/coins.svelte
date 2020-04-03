@@ -1,7 +1,7 @@
 <script>
   import { onMount, afterUpdate, onDestroy } from "svelte";
   import { writable, get } from "svelte/store";
-  import { setContext } from "svelte";
+  import { setContext, getContext } from "svelte";
   import { spring } from "svelte/motion";
   import WebMidi from "webmidi";
   import Playground from "../components/Playground.svelte";
@@ -12,6 +12,13 @@
   let midi;
   let midiOutput = writable(null);
   let coinsRegister = writable([]);
+
+  let midiDeviceMenu = {
+    show: false,
+    toggle: show => {
+      midiDeviceMenu.show = show !== undefined ? show : !midiDeviceMenu.show;
+    }
+  };
 
   let viewBox = { x: 0, y: 0, width: 180, height: 100 };
 
@@ -144,7 +151,7 @@
   <title>Coin</title>
 </svelte:head>
 
-<Playground enable="false">
+<Playground onPlaygroundClick={() => midiDeviceMenu.show = false}>
   <svg
     viewbox="{viewBox.x}
     {viewBox.y}
@@ -166,7 +173,8 @@
     label="Status:"
     status={status && status.toString()}
     {midi}
-    {midiOutput}>
+    {midiOutput}
+    {midiDeviceMenu}>
     <button on:click={onAddCoin}>add coin</button>
     <button on:click={onClearCoins}>destroy</button>
   </StatusBar>

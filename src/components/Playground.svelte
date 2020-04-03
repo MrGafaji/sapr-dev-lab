@@ -16,17 +16,13 @@
 </style>
 
 <script>
-  export let enable = true;
-  let enabled = enable;
+  export let onPlaygroundClick;
 </script>
-{#if enabled}
+
 <div class="full-fixed-container">
-  <div class="playground">
+  <div class="playground" on:click={() => onPlaygroundClick()}>
     <slot>
-      StatusBar component gets no input...
+      ?
     </slot>
   </div>
 </div>
-{:else}
-<slot />
-{/if}
