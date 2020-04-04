@@ -7,7 +7,8 @@
   export let midiOutput;
   export let showDeviceMenu;
 
-  const onChangeMidiDevice = device => {
+  const onChangeMidiDevice = (device, index) => {
+    window.localStorage.setItem("defaultMidiDeviceIndex", index);
     midiOutput.set(device);
     showDeviceMenu.set(false);
   };
@@ -50,8 +51,8 @@
     </span>
     <span class="device-menu {!$showDeviceMenu && 'hidden'}">
       {#if $midi}
-        {#each $midi.outputs as device}
-          <div on:click|stopPropagation={() => onChangeMidiDevice(device)}>{device.name}</div>
+        {#each $midi.outputs as device, index}
+          <div on:click|stopPropagation={() => onChangeMidiDevice(device, index)}>{device.name}</div>
         {:else}
           <p>No devices..</p>
         {/each}

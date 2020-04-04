@@ -2,16 +2,18 @@
   import { spring } from 'svelte/motion';
   import { getContext } from 'svelte';
   import throttle from 'lodash/throttle';
+  import debounce from 'lodash/debounce';
 
   export let color = "white";
   export let id = 0;
   export let size = 5;
   export let coords;
   export let viewBox;
-  coords.stiffness = 0.6;
+  coords.stiffness = 0.3;
   coords.damping = 0.8;
   export let midiOutput;
   export let updateRegister;
+  export let svg;
 
   const convertPoint = getContext("convertPoint");
   let circle;
@@ -35,7 +37,7 @@
     y = limit(y, viewBox.y, viewBox.height);
     coords.set({ x, y });
     updateRegister();
-  }, 50);
+  }, 100);
 
   const sendMidi = (x, y) => {
     let pitchBends = [
@@ -48,11 +50,18 @@
     });
   }
 
-  const onMove = event => {
-    event.stopPropagation();
-    let { x, y } = fingerTracking(event);
+  const onMove = (event, coords) => {
+    let { x, y } = coords ? coords : fingerTracking(event);
     sendMidi(x, y);
     updateCoords(x, y);
+  };
+  
+  const onTrick = (event) => {
+    const trickTouch = [...event.touches].find((touch, index) => touch.target === svg);
+    if (trickTouch) {
+      const moveCoinToEmptyFinger = debounce(onMove, 100);
+      moveCoinToEmptyFinger(event, convertPoint(trickTouch.clientX, trickTouch.clientY));
+    }
   };
 </script>
 
@@ -60,8 +69,10 @@
 <circle
   bind:this={circle}
   {id}
-  on:touchmove|preventDefault={onMove}
+  on:touchmove|preventDefault|stopPropagation={onMove}
+  on:touchend={onTrick}
   cx={$coords.x}
   cy={$coords.y}
   r={size}
-  fill={color} />
+  fill={color} 
+/>

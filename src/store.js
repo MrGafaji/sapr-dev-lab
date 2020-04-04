@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { writable, get } from "svelte/store";
 import { spring } from "svelte/motion";
 import WebMidi from "webmidi";
 
@@ -56,13 +56,14 @@ export const setLocalStorage = (entry, coins, window) => {
   window.localStorage.setItem(entry, JSON.stringify(flatcoins));
 };
 
-export const enableMidi = () => {
+export const enableMidi = window => {
   WebMidi.enable(function(err) {
     if (err) {
       console.log("WebMidi could not be enabled.", err);
     } else {
       midi.set(WebMidi);
-      midiOutput.set(WebMidi.outputs[1]);
+      const defaultMidiDeviceIndex = JSON.parse(window.localStorage.getItem("defaultMidiDeviceIndex"));
+      midiOutput.set(WebMidi.outputs[defaultMidiDeviceIndex || 0]);
     }
   });
 };

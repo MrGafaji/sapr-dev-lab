@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { getContext, setContext } from "svelte";
   import { writable, get } from "svelte/store";
+  import debounce from "lodash/debounce";
   import Playground from "../components/Playground.svelte";
   import Coin from "../components/Coin.svelte";
   import StatusBar from "../components/StatusBar.svelte";
@@ -37,7 +38,8 @@
   };
 
   onMount(() => {
-    enableMidi();
+    const midi = enableMidi(window);
+
     const localStorageCoins = JSON.parse(window.localStorage.getItem("coins"));
     if (localStorageCoins !== null) {
       coins.set([]);
@@ -46,12 +48,13 @@
       });
     }
     onUpdateRegister = () => {
-      setLocalStorage("coins", get(coins), window);
+      const setLocalStorageDebounced = debounce(setLocalStorage, 300);
+      setLocalStorageDebounced("coins", get(coins), window);
     };
 
     midiOutput.subscribe(device => {
       if (device) {
-        status.set("Connected with " + get(midiOutput).name);
+        status.set("Connected with " + device.name);
       }
     });
 
@@ -97,10 +100,10 @@
     {#each $coins as coin}
       <Coin
         {...coin}
-        midiOutput={midiOutput}
+        {midiOutput}
         updateRegister={onUpdateRegister}
-        viewBox={viewBox} 
-      />
+        {viewBox}
+        {svg} />
     {:else}
       <p>Add coins first</p>
     {/each}
@@ -109,9 +112,9 @@
   <StatusBar
     label="Status:"
     status={$status}
-    midi={midi}
-    midiOutput={midiOutput}
-    showDeviceMenu={showDeviceMenu}>
+    {midi}
+    {midiOutput}
+    {showDeviceMenu}>
     <button on:click={onAddCoin}>add coin</button>
     <button on:click={onClearCoins}>destroy</button>
   </StatusBar>
