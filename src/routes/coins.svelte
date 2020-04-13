@@ -7,7 +7,9 @@
   import Coin from "../components/Coin.svelte";
   import StatusBar from "../components/StatusBar.svelte";
   import {
+    table,
     status,
+    configureMode,
     midi,
     midiOutput,
     coins,
@@ -15,6 +17,7 @@
     showDeviceMenu,
     stopPropagation,
     addCoin,
+    deleteCoin,
     setLocalStorage,
     enableMidi
   } from "../store.js";
@@ -33,8 +36,24 @@
     addCoin();
   };
 
+  const onDeleteCoin = () => {
+    deleteCoin();
+  };
+
   const onClearCoins = () => {
     coins.set([]);
+  };
+
+  const onConfigure = () => {
+    if ($configureMode) {
+      if ($configureMode.direction === "x") {
+        configureMode.set({ ...$configureMode, direction: "y" });
+      } else {
+        configureMode.set(false);
+      }
+    } else {
+      configureMode.set(true);
+    }
   };
 
   onMount(() => {
@@ -79,6 +98,10 @@
     overflow: visible;
     margin: 5% 5% 0 5%;
   }
+  text {
+    fill: limegreen;
+    font-variant: all-petite-caps;
+  }
 </style>
 
 <svelte:head>
@@ -91,23 +114,34 @@
 </svelte:head>
 
 <Playground onPlaygroundClick={() => showDeviceMenu.set(false)}>
-  <svg
-    viewbox="{viewBox.x}
-    {viewBox.y}
-    {viewBox.width}
-    {viewBox.height}"
-    bind:this={svg}>
-    {#each $coins as coin}
-      <Coin
-        {...coin}
-        {midiOutput}
-        updateRegister={onUpdateRegister}
-        {viewBox}
-        {svg} />
-    {:else}
-      <p>Add coins first</p>
-    {/each}
-  </svg>
+  {#if $table === 2}
+    <svg
+      viewbox="{viewBox.x}
+      {viewBox.y}
+      {viewBox.width}
+      {viewBox.height}"
+      bind:this={svg}>
+      {#if $coins.length}
+        {#each $coins as coin (coin.id)}
+          <Coin
+            {...coin}
+            {midiOutput}
+            updateRegister={onUpdateRegister}
+            {configureMode}
+            {viewBox}
+            {svg} />
+        {/each}
+      {:else}
+        <text text-anchor="middle" x={viewBox.width / 2} y={viewBox.height / 2}>
+          add coins
+        </text>
+      {/if}
+    </svg>
+  {:else if $table === 1}
+    <div>table 1</div>
+  {:else}
+    <div>table 0</div>
+  {/if}
 
   <StatusBar
     label="Status:"
@@ -115,7 +149,15 @@
     {midi}
     {midiOutput}
     {showDeviceMenu}>
+    <button on:click={onConfigure} class={$configureMode && 'btn-active'}>
+      {#if $configureMode.direction}
+        <div class="animate-wobble-{$configureMode.direction}">
+          map {$configureMode.direction} axis
+        </div>
+      {:else if $configureMode}select coin{:else}configure{/if}
+    </button>
     <button on:click={onAddCoin}>add coin</button>
+    <button on:click={onDeleteCoin}>delete coin</button>
     <button on:click={onClearCoins}>destroy</button>
   </StatusBar>
 </Playground>

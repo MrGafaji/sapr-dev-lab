@@ -50,6 +50,62 @@ button {
   font-variant: small-caps;
   font-size: 1em;
   color: paleturquoise;
+  cursor: pointer;
   padding: 0.5em 1em;
   border: solid 2px paleturquoise;
+  overflow: hidden;
+}
+button.btn-active,
+button:active {
+  background: black;
+}
+
+@keyframes horizontalWobble {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(10px);
+  }
+  75% {
+    transform: translateX(-10px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+.animate-wobble-x {
+  animation: horizontalWobble 1s linear infinite normal;
+}
+
+@keyframes verticalWobble {
+  0% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(10px);
+  }
+  75% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.animate-wobble-y {
+  animation: verticalWobble 1s linear infinite normal;
+}
+
+.my-10 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.mx-10 {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.pointer {
+  cursor: pointer;
 }

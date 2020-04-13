@@ -1,8 +1,11 @@
-import { writable, get } from "svelte/store";
+import { writable } from "svelte/store";
 import { spring } from "svelte/motion";
+import { cubicOut } from "svelte/easing";
 import WebMidi from "webmidi";
 
+export const table = writable(2);
 export const status = writable(null);
+export const configureMode = writable(false);
 export const midi = writable(null);
 export const midiOutput = writable(null);
 export const coins = writable([]);
@@ -16,8 +19,8 @@ export const stopPropagation = () => {
   event.stopPropagation();
 };
 
-export const addCoin = coinJson => {
-  coins.update(prevCoins => {
+export const addCoin = (coinJson) => {
+  coins.update((prevCoins) => {
     const { x, y } = coinJson ? coinJson.coords : { x: prevCoins.length * 10 + 15, y: 15 };
 
     if (prevCoins.length < 10) {
@@ -35,19 +38,25 @@ export const addCoin = coinJson => {
             "limegreen",
             "pink",
             "orangered",
-            "CadetBlue"
+            "CadetBlue",
           ][prevCoins.length],
-          coords: spring({ x: x, y: y })
-        }
+          coords: spring({ x: x, y: y }),
+        },
       ];
     }
   });
 };
 
+export const deleteCoin = () => {
+  coins.update((prevCoins) => {
+    return prevCoins.slice(0, -1);
+  });
+};
+
 export const setLocalStorage = (entry, coins, window) => {
-  const flatcoins = coins.map(coin => {
+  const flatcoins = coins.map((coin) => {
     let x, y;
-    coin.coords.subscribe(c => {
+    coin.coords.subscribe((c) => {
       x = c.x;
       y = c.y;
     });
@@ -56,8 +65,8 @@ export const setLocalStorage = (entry, coins, window) => {
   window.localStorage.setItem(entry, JSON.stringify(flatcoins));
 };
 
-export const enableMidi = window => {
-  WebMidi.enable(function(err) {
+export const enableMidi = (window) => {
+  WebMidi.enable(function (err) {
     if (err) {
       console.log("WebMidi could not be enabled.", err);
     } else {
