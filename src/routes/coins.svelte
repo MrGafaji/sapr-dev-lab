@@ -92,11 +92,10 @@
 
 <style>
   svg {
-    width: 90%;
+    width: 100%;
     height: 85%;
-    background: rgba(255, 255, 255, 0.1);
     overflow: visible;
-    margin: 5% 5% 0 5%;
+    margin: 5% 0 0 0;
   }
   text {
     fill: limegreen;
@@ -121,6 +120,7 @@
       {viewBox.width}
       {viewBox.height}"
       bind:this={svg}>
+      <rect x={viewBox.x} y={viewBox.y} width={viewBox.width} height={viewBox.height} fill="#1C1F1F" />
       {#if $coins && $coins.length}
         {#each $coins as coin (coin.id)}
           <Coin

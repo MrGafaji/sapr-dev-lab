@@ -24,8 +24,6 @@
 
   const scale = (num, [in_min, in_max], [out_min, out_max]) => {
     let scaledNumber = ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
-    if (scaledNumber > out_max) return out_max;
-    if (scaledNumber < out_min) return out_min;
     return scaledNumber;
   };
 
@@ -47,6 +45,8 @@
   }, 10);
 
   const sendMidi = ({ x, y }, direction) => {
+    x = limit(x, viewBox.x, viewBox.width);
+    y = limit(y, viewBox.y, viewBox.height);
     let pitchBends = [
       scale(x, [viewBox.x, viewBox.width], [-1, 1]),
       scale(y, [viewBox.y, viewBox.height], [1, -1])
