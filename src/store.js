@@ -21,13 +21,14 @@ export const stopPropagation = () => {
 
 export const addCoin = (coinJson) => {
   coins.update((prevCoins) => {
-    const { x, y } = coinJson ? coinJson.coords : { x: prevCoins.length * 10 + 15, y: 15 };
+    const currentSlot = prevCoins ? prevCoins.length : 0;
+    const { x, y } = coinJson ? coinJson.coords : { x: currentSlot * 10 + 15, y: 15 };
 
-    if (prevCoins.length < 10) {
+    if (currentSlot < 10) {
       return [
         ...prevCoins,
         {
-          id: coinJson ? coinJson.id : prevCoins.length,
+          id: coinJson ? coinJson.id : currentSlot,
           color: [
             "gold",
             "silver",
@@ -39,10 +40,12 @@ export const addCoin = (coinJson) => {
             "pink",
             "orangered",
             "CadetBlue",
-          ][prevCoins.length],
+          ][currentSlot],
           coords: spring({ x: x, y: y }),
         },
       ];
+    } else {
+      return prevCoins;
     }
   });
 };

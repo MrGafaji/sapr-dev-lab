@@ -53,7 +53,8 @@
       pitchBends.forEach((pitchBend, i) => {
         let index = i;
         if (direction) index = direction === "x" ? 0 : 1;
-        $midiOutput.sendPitchBend(pitchBend, index + 1 + 2 * circle.id);
+        const channel = index + 1 + 2 * circle.id;
+        $midiOutput.sendPitchBend(pitchBend, channel);
       });
   };
 
@@ -82,14 +83,14 @@
     }
   };
 
-  let uziSendMidi = false;
+  let uziSendMidi;
   configureMode.subscribe(mode => {
     if (mode.id === id && mode.direction) {
       uziSendMidi && clearInterval(uziSendMidi);
-      uziSendMidi = setInterval(sendMidiWithDirection, 300);
-      function sendMidiWithDirection() {
+      const sendMidiWithDirection = () => {
         !document.hasFocus() && sendMidi($coords, mode.direction);
       }
+      uziSendMidi = setInterval(sendMidiWithDirection, 300);
     } else {
       uziSendMidi && clearInterval(uziSendMidi);
     }

@@ -78,7 +78,7 @@
     });
 
     coins.subscribe(register => {
-      if (register.length) setLocalStorage("coins", register, window);
+      if (register && register.length) setLocalStorage("coins", register, window);
     });
 
     document
@@ -121,7 +121,7 @@
       {viewBox.width}
       {viewBox.height}"
       bind:this={svg}>
-      {#if $coins.length}
+      {#if $coins && $coins.length}
         {#each $coins as coin (coin.id)}
           <Coin
             {...coin}
