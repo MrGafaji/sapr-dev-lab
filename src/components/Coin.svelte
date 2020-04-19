@@ -23,7 +23,10 @@
   let configureY = false;
 
   const scale = (num, [in_min, in_max], [out_min, out_max]) => {
-    return ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
+    let scaledNumber = ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
+    if (scaledNumber > out_max) return out_max;
+    if (scaledNumber < out_min) return out_min;
+    return scaledNumber;
   };
 
   const limit = (input, min, max) => {
@@ -48,14 +51,12 @@
       scale(x, [viewBox.x, viewBox.width], [-1, 1]),
       scale(y, [viewBox.y, viewBox.height], [1, -1])
     ];
-    const definitelyScaled = pitchBends.every(d => d > -1 && d < 1);
-    definitelyScaled &&
-      pitchBends.forEach((pitchBend, i) => {
-        let index = i;
-        if (direction) index = direction === "x" ? 0 : 1;
-        const channel = index + 1 + 2 * circle.id;
-        $midiOutput.sendPitchBend(pitchBend, channel);
-      });
+    pitchBends.forEach((pitchBend, i) => {
+      let index = i;
+      if (direction) index = direction === "x" ? 0 : 1;
+      const channel = index + 1 + 2 * circle.id;
+      $midiOutput.sendPitchBend(pitchBend, channel);
+    });
   };
 
   const onMove = (event, coords) => {
