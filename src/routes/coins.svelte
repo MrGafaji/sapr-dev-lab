@@ -92,10 +92,10 @@
 
 <style>
   svg {
-    width: 100%;
+    width: 90%;
     height: 85%;
     overflow: visible;
-    margin: 5% 0 0 0;
+    margin: 5% 5% 0 5%;
   }
   text {
     fill: limegreen;
