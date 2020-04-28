@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import { onDestroy } from "svelte";
   const viewBoxWidth = 160;
   const viewBoxHeight = 90;
   const population = 100;
@@ -11,14 +12,16 @@
   let pause = false;
 
   function step(timestamp) {
-    if (!start) start = timestamp;
-    progress = timestamp - start;
+    if (!pause) {
+      if (!start) start = timestamp;
+      progress = timestamp - start;
 
-    for (let i = 0; i < registeredLines.length; i++) {
-      setLine(i, progress);
+      for (let i = 0; i < registeredLines.length; i++) {
+        setLine(i, progress);
+      }
+
+      window.requestAnimationFrame(step);
     }
-
-    !pause && window.requestAnimationFrame(step);
   }
 
   function populateregisteredLines() {
@@ -50,7 +53,7 @@
           Math.sin(prog / 500 + lineId) * registeredLines[lineId].initial.y2
       );
     } else {
-      console.error(" No circles found");
+      console.error(" No lines found");
     }
   }
 
@@ -62,6 +65,10 @@
   populateregisteredLines();
   onMount(() => {
     window.requestAnimationFrame(step);
+  });
+
+  onDestroy(() => {
+    pause = true;
   });
 </script>
 
