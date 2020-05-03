@@ -5,6 +5,7 @@ import WebMidi from "webmidi";
 
 export const table = writable(2);
 export const status = writable(null);
+export const loopmidiLink = "https://www.tobias-erichsen.de/software/loopmidi.html";
 export const configureMode = writable(false);
 export const midi = writable(null);
 export const midiOutput = writable(null);

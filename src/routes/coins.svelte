@@ -9,6 +9,7 @@
   import {
     table,
     status,
+    loopmidiLink,
     configureMode,
     midi,
     midiOutput,
@@ -146,6 +147,7 @@
   <StatusBar
     label="Status:"
     status={$status}
+    {loopmidiLink}
     {midi}
     {midiOutput}
     {showDeviceMenu}>

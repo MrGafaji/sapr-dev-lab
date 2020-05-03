@@ -6,6 +6,7 @@
   export let midi;
   export let midiOutput;
   export let showDeviceMenu;
+  export let loopmidiLink;
 
   const onChangeMidiDevice = (device, index) => {
     window.localStorage.setItem("defaultMidiDeviceIndex", index);
@@ -54,7 +55,11 @@
           alt="open midi device menu">
           {status}
         </a>
-      {:else}loading...{/if}
+      {:else}
+        <span>no midi device found - install 
+          <a href={loopmidiLink} target="_blank">loopmidi?</a>
+        </span>
+      {/if}
     </span>
     <span class="device-menu {!$showDeviceMenu && 'hidden'}">
       {#if $midi}
