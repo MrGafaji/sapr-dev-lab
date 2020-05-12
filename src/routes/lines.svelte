@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   const viewBoxWidth = 160;
   const viewBoxHeight = 90;
-  const population = 100;
+  const population = 50;
   const lineOrigin = { x1: viewBoxWidth / 2, y1: viewBoxHeight / 2 };
 
   let registeredLines = [];

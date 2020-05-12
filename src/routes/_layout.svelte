@@ -10,7 +10,7 @@
 
     max-width: 100%;
     height: 100%;
-    background-color: rgb(109, 53, 114);
+    background-color: black;
 
     color: white;
     margin: auto auto;
@@ -19,7 +19,7 @@
   }
 </style>
 
-<Nav {segment}/>
+<Nav {segment} />
 
 <main>
   <slot />
