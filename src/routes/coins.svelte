@@ -1,11 +1,11 @@
 <script>
-  import { onMount } from "svelte";
-  import { getContext, setContext } from "svelte";
-  import { writable, get } from "svelte/store";
-  import debounce from "lodash/debounce";
-  import Playground from "../components/Playground.svelte";
-  import Coin from "../components/Coin.svelte";
-  import StatusBar from "../components/StatusBar.svelte";
+  import { onMount } from 'svelte';
+  import { getContext, setContext } from 'svelte';
+  import { writable, get } from 'svelte/store';
+  import debounce from 'lodash/debounce';
+  import Playground from '../components/Playground.svelte';
+  import Coin from '../components/Coin.svelte';
+  import StatusBar from '../components/StatusBar.svelte';
   import {
     table,
     status,
@@ -20,11 +20,11 @@
     addCoin,
     deleteCoin,
     setLocalStorage,
-    enableMidi
-  } from "../store.js";
+    enableMidi,
+  } from '../store.js';
 
   let svg;
-  setContext("convertPoint", (x, y) => {
+  setContext('convertPoint', (x, y) => {
     const pt = svg.createSVGPoint();
     pt.x = x;
     pt.y = y;
@@ -47,8 +47,8 @@
 
   const onConfigure = () => {
     if ($configureMode) {
-      if ($configureMode.direction === "x") {
-        configureMode.set({ ...$configureMode, direction: "y" });
+      if ($configureMode.direction === 'x') {
+        configureMode.set({ ...$configureMode, direction: 'y' });
       } else {
         configureMode.set(false);
       }
@@ -60,34 +60,35 @@
   onMount(() => {
     const midi = enableMidi(window);
 
-    const localStorageCoins = JSON.parse(window.localStorage.getItem("coins"));
+    const localStorageCoins = JSON.parse(window.localStorage.getItem('coins'));
     if (localStorageCoins !== null) {
       coins.set([]);
-      localStorageCoins.map(coinJson => {
+      localStorageCoins.map((coinJson) => {
         addCoin(coinJson);
       });
     }
     onUpdateRegister = () => {
       const setLocalStorageDebounced = debounce(setLocalStorage, 300);
-      setLocalStorageDebounced("coins", get(coins), window);
+      setLocalStorageDebounced('coins', get(coins), window);
     };
 
-    midiOutput.subscribe(device => {
+    midiOutput.subscribe((device) => {
       if (device) {
-        status.set("Connected with " + device.name);
+        status.set('Connected with ' + device.name);
       }
     });
 
-    coins.subscribe(register => {
-      if (register && register.length) setLocalStorage("coins", register, window);
+    coins.subscribe((register) => {
+      if (register && register.length)
+        setLocalStorage('coins', register, window);
     });
 
     document
-      .querySelector(".playground")
-      .addEventListener("touchstart", event => stopPropagation(event), true);
+      .querySelector('.playground')
+      .addEventListener('touchstart', (event) => stopPropagation(event), true);
     document
-      .querySelector(".playground")
-      .addEventListener("touchcancel", event => stopPropagation(event), true);
+      .querySelector('.playground')
+      .addEventListener('touchcancel', (event) => stopPropagation(event), true);
   });
 </script>
 
@@ -121,7 +122,12 @@
       {viewBox.width}
       {viewBox.height}"
       bind:this={svg}>
-      <rect x={viewBox.x} y={viewBox.y} width={viewBox.width} height={viewBox.height} fill="#1C1F1F" />
+      <rect
+        x={viewBox.x}
+        y={viewBox.y}
+        width={viewBox.width}
+        height={viewBox.height}
+        fill="#1C1F1F" />
       {#if $coins && $coins.length}
         {#each $coins as coin (coin.id)}
           <Coin

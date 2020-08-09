@@ -1,5 +1,5 @@
 <script>
-  import { onMount, onDestroy } from "svelte";
+  import { onMount, onDestroy } from 'svelte';
   const viewBoxWidth = 200;
   const viewBoxHeight = 200;
   const numberOfCircles = 17;
@@ -33,7 +33,7 @@
       circle.cx =
         center.x + rotRadius * Math.cos((i * 2 * Math.PI) / numberOfCircles);
       circle.r = 5;
-      circle.id = "circle-" + (i + 1);
+      circle.id = 'circle-' + (i + 1);
 
       circle.initial = circle;
 
@@ -42,16 +42,16 @@
   }
 
   function moveCircle(circleId, prog, rotRadius, center) {
-    var circle = document.getElementById("circle-" + circleId);
+    var circle = document.getElementById('circle-' + circleId);
     if (circle) {
       circle.setAttribute(
-        "cx",
+        'cx',
         center.x +
           rotRadius *
             Math.cos(prog + (circleId * 2 * Math.PI) / numberOfCircles)
       );
       circle.setAttribute(
-        "cy",
+        'cy',
         center.y +
           rotRadius *
             Math.sin(prog + (circleId * 2 * Math.PI) / numberOfCircles)
@@ -62,7 +62,7 @@
       //       Math.sin(prog / 1500) * registeredCircles[circleId].initial.r
       //   );
     } else {
-      console.log(" No circles found");
+      console.log(' No circles found');
     }
   }
 

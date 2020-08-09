@@ -1,11 +1,12 @@
-import { writable } from "svelte/store";
-import { spring } from "svelte/motion";
-import { cubicOut } from "svelte/easing";
-import WebMidi from "webmidi";
+import { writable } from 'svelte/store';
+import { spring } from 'svelte/motion';
+import { cubicOut } from 'svelte/easing';
+import WebMidi from 'webmidi';
 
 export const table = writable(2);
 export const status = writable(null);
-export const loopmidiLink = "https://www.tobias-erichsen.de/software/loopmidi.html";
+export const loopmidiLink =
+  'https://www.tobias-erichsen.de/software/loopmidi.html';
 export const configureMode = writable(false);
 export const midi = writable(null);
 export const midiOutput = writable(null);
@@ -23,7 +24,9 @@ export const stopPropagation = () => {
 export const addCoin = (coinJson) => {
   coins.update((prevCoins) => {
     const currentSlot = prevCoins ? prevCoins.length : 0;
-    const { x, y } = coinJson ? coinJson.coords : { x: currentSlot * 10 + 15, y: 15 };
+    const { x, y } = coinJson
+      ? coinJson.coords
+      : { x: currentSlot * 10 + 15, y: 15 };
 
     if (currentSlot < 10) {
       return [
@@ -31,16 +34,16 @@ export const addCoin = (coinJson) => {
         {
           id: coinJson ? coinJson.id : currentSlot,
           color: [
-            "gold",
-            "silver",
-            "DarkGoldenRod",
-            "magenta",
-            "cyan",
-            "orange",
-            "limegreen",
-            "pink",
-            "orangered",
-            "CadetBlue",
+            'gold',
+            'silver',
+            'DarkGoldenRod',
+            'magenta',
+            'cyan',
+            'orange',
+            'limegreen',
+            'pink',
+            'orangered',
+            'CadetBlue',
           ][currentSlot],
           coords: spring({ x: x, y: y }),
         },
@@ -72,10 +75,12 @@ export const setLocalStorage = (entry, coins, window) => {
 export const enableMidi = (window) => {
   WebMidi.enable(function (err) {
     if (err) {
-      console.log("WebMidi could not be enabled.", err);
+      console.log('WebMidi could not be enabled.', err);
     } else {
       midi.set(WebMidi);
-      const defaultMidiDeviceIndex = JSON.parse(window.localStorage.getItem("defaultMidiDeviceIndex"));
+      const defaultMidiDeviceIndex = JSON.parse(
+        window.localStorage.getItem('defaultMidiDeviceIndex')
+      );
       midiOutput.set(WebMidi.outputs[defaultMidiDeviceIndex || 0]);
     }
   });

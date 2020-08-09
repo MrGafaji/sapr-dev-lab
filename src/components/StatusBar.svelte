@@ -1,5 +1,5 @@
 <script>
-  import { setContext } from "svelte";
+  import { setContext } from 'svelte';
 
   export let label;
   export let status;
@@ -9,7 +9,7 @@
   export let loopmidiLink;
 
   const onChangeMidiDevice = (device, index) => {
-    window.localStorage.setItem("defaultMidiDeviceIndex", index);
+    window.localStorage.setItem('defaultMidiDeviceIndex', index);
     midiOutput.set(device);
     showDeviceMenu.set(false);
   };
@@ -46,7 +46,7 @@
 <div class="status-bar">
   <span class="status">
     <span>{label}</span>
-    <span class="{$showDeviceMenu && 'hidden'}">
+    <span class={$showDeviceMenu && 'hidden'}>
       {#if status}
         <a
           on:click|stopPropagation|preventDefault={() => ($showDeviceMenu = !$showDeviceMenu)}
@@ -56,7 +56,8 @@
           {status}
         </a>
       {:else}
-        <span>no midi device found - install 
+        <span>
+          no midi device found - install
           <a href={loopmidiLink} target="_blank">loopmidi?</a>
         </span>
       {/if}

@@ -1,6 +1,6 @@
 <script>
-  import { onMount } from "svelte";
-  import { onDestroy } from "svelte";
+  import { onMount } from 'svelte';
+  import { onDestroy } from 'svelte';
   const viewBoxWidth = 160;
   const viewBoxHeight = 90;
   const population = 100;
@@ -43,20 +43,20 @@
     if (triangleSegments.length > 0) {
       for (var i = 0; i < triangleSegments.length; i++) {
         triangleSegments[i].setAttribute(
-          "x2",
+          'x2',
           registeredTriangles[triangleId].initial.x2 +
             Math.cos(prog / 500 + triangleId) *
               registeredTriangles[triangleId].initial.x2
         );
         triangleSegments[i].setAttribute(
-          "y2",
+          'y2',
           registeredTriangles[triangleId].initial.y2 +
             Math.sin(prog / 500 + triangleId) *
               registeredTriangles[triangleId].initial.y2
         );
       }
     } else {
-      console.error(" No Triangles found");
+      console.error(' No Triangles found');
     }
   }
 
@@ -103,7 +103,7 @@
   {viewBoxHeight}">
   {#each registeredTriangles as { id, x1, y1, x2, y2 }}
     <g id="triangle-{id}" class="triangle">
-      <line class="triangle-{id}-segment" x1={x1} {y1} {x2} {y2} />
+      <line class="triangle-{id}-segment" {x1} {y1} {x2} {y2} />
       <line class="triangle-{id}-segment side-a" {x1} {y1} {x2} {y2} />
       <line class="triangle-{id}-segment side-b" {x1} {y1} {x2} {y2} />
     </g>

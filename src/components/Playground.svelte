@@ -1,3 +1,7 @@
+<script>
+  export let onPlaygroundClick;
+</script>
+
 <style>
   .full-fixed-container {
     position: fixed;
@@ -15,14 +19,8 @@
   }
 </style>
 
-<script>
-  export let onPlaygroundClick;
-</script>
-
 <div class="full-fixed-container">
   <div class="playground" on:click={() => onPlaygroundClick()}>
-    <slot>
-      ?
-    </slot>
+    <slot>?</slot>
   </div>
 </div>

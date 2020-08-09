@@ -1,6 +1,6 @@
 <script>
-  import { onMount } from "svelte";
-  import { onDestroy } from "svelte";
+  import { onMount } from 'svelte';
+  import { onDestroy } from 'svelte';
   const viewBoxWidth = 160;
   const viewBoxHeight = 90;
   const population = 100;
@@ -31,7 +31,7 @@
       line.y1 = lineOrigin.y1;
       line.x2 = Math.random() * viewBoxWidth;
       line.y2 = Math.random() * viewBoxHeight;
-      line.id = "line-" + i;
+      line.id = 'line-' + i;
 
       line.initial = line;
 
@@ -40,20 +40,20 @@
   }
 
   function setLine(lineId, prog) {
-    var line = document.getElementById("line-" + lineId);
+    var line = document.getElementById('line-' + lineId);
     if (line) {
       line.setAttribute(
-        "x2",
+        'x2',
         registeredLines[lineId].initial.x2 +
           Math.cos(prog / 500 + lineId) * registeredLines[lineId].initial.x2
       );
       line.setAttribute(
-        "y2",
+        'y2',
         registeredLines[lineId].initial.y2 +
           Math.sin(prog / 500 + lineId) * registeredLines[lineId].initial.y2
       );
     } else {
-      console.error(" No lines found");
+      console.error(' No lines found');
     }
   }
 
