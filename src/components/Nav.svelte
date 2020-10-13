@@ -62,6 +62,12 @@
     <li>
       <a class:selected={segment === 'triangles'} href="triangles">triangles</a>
     </li>
+    <li>
+      <a class:selected={segment === 'bouquet'} href="bouquet">bouquet</a>
+    </li>
+    <li>
+      <a class:selected={segment === 'rwhzombiekiller'} href="rwhzombiekiller">rwhzombiekiller</a>
+    </li>
 
     <!-- for the blog link, we're using rel=prefetch so that Sapper prefetches
 		     the blog data when we hover over the link or tap it on a touchscreen -->
